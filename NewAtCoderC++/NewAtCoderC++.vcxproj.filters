@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\TadaLib">
+      <UniqueIdentifier>{2d35125c-cf52-4792-b3c6-6aff213b3258}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TadaLib\BinarySearchLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\BitLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\FactorizeLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\GeometoryLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\ModLab.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\SegmentTreeLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\UnionFindLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\LazySegmentTree.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
