@@ -3,8 +3,8 @@
 Debug/
 test.exe
 a.exe
-MyAtCoderC++.sln
-MyAtCoderC++.vcxproj
-MyAtCoderC++.vcxproj.filters
-MyAtCoderC++.vcxproj.user
-GameFreak.cpp
+NewAtCoderC++.sln
+NewAtCoderC++/NewAtCoderC++.vcxproj
+NewAtCoderC++/NewAtCoderC++.vcxproj.filters
+NewAtCoderC++/NewAtCoderC++.vcxproj.user
+NewAtCoderC++/test.cpp

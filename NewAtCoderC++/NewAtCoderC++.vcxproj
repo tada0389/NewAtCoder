@@ -129,6 +129,8 @@
   <ItemGroup>
     <ClInclude Include="TadaLib\BinarySearchLib.h" />
     <ClInclude Include="TadaLib\BitLib.h" />
+    <ClInclude Include="TadaLib\CulSum2D.h" />
+    <ClInclude Include="TadaLib\Dijkstra.h" />
     <ClInclude Include="TadaLib\FactorizeLib.h" />
     <ClInclude Include="TadaLib\GeometoryLib.h" />
     <ClInclude Include="TadaLib\LazySegmentTree.h" />
@@ -138,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="tmp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,7 +8,6 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include <stdio.h>
 #include <cstdio>
 #include <cstring>
 #include <cmath>
@@ -19,6 +18,7 @@
 #include <random>
 #include <complex>
 #include <functional>
+#include <tuple>
 
 using namespace std;
 
@@ -31,7 +31,7 @@ using namespace std;
 #define Possible(q) ((q) ? "Possible" : "Impossible")
 #define POSSIBLE(q) ((q) ? "POSSIBLE" : "IMPOSSIBLE")
 
-using ll =  long long;
+using ll = long long;
 
 using pint = std::pair<int, int>;
 using pll = std::pair<ll, ll>;
@@ -53,11 +53,14 @@ namespace {
 	template <typename T> void Cout(const T& x, const char* end = "\n") { std::cout << x << end; }
 	template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
+	void CCout(long long x, const char* end = "\n") { std::cerr << x << end; }
+	template <typename T> void CCout(const T& x, const char* end = "\n") { std::cerr << x << end; }
+	template <typename T> void CCout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cerr << x[i] << (i == sz - 1 ? end : sep); } }
 
 	// 標準入出力
 	struct inp {
-		size_t sz;
-		inp(size_t _sz = 1) : sz(_sz) {}
+		std::size_t sz;
+		inp(std::size_t _sz = 1) : sz(_sz) {}
 		template <typename T> operator T () const { T a; std::cin >> a; return a; }
 		template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
 		template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
@@ -68,20 +71,42 @@ namespace {
 
 int main() {
 
-	ll a, b, c;
-	cin >> a >> b >> c;
+	string l = inp1;
 
-	ll lhs = 4 * a * b;
-	ll rhs = c - a - b;
-	if (rhs < 0) {
-		Cout("No");
-		return 0;
+	// 片方が0なら必ずOK
+	// 繰り上げがない場合はOK (同じ桁に1がそろわない)
+	size_t n = l.length();
+	// AおよびBの値の上からk桁目まで確定させ，その時点ですでにA+BがL以下であることが分かっている/いない(0/1)組の数
+	vector<vector<ll>> dp(n + 1, vector<ll>(2, 0));
+
+	dp[1][0] = 1;
+	dp[1][1] = 1;
+
+	Rep(i, 1, n) {
+		// L以下
+		// 1のとき
+		dp[i + 1][0] += dp[i][0];
+		// 0
+		dp[i + 1][0] += dp[i][0] * 2;
+
+		// 確定していない
+		int d = l[i] - '0';
+		if (d == 0) {
+			// 0で決まり
+			dp[i + 1][1] += dp[i][1];
+		}
+		else {
+			// 0の選択肢も出てくる
+			dp[i + 1][0] += dp[i][1];
+
+			dp[i + 1][1] += dp[i][1];
+		}
+
+		dp[i + 1][0] %= mod;
+		dp[i + 1][1] %= mod;
 	}
-	rhs *= rhs;
-	if (lhs < rhs) {
-		Cout("Yes");
-	}
-	else Cout("No");
+
+	Cout(dp[n][0] + dp[n][1]);
 
 	return 0;
 }

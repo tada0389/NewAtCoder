@@ -8,7 +8,6 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include <stdio.h>
 #include <cstdio>
 #include <cstring>
 #include <cmath>

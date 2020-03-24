@@ -8,7 +8,6 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include <stdio.h>
 #include <cstdio>
 #include <cstring>
 #include <cmath>
@@ -40,7 +39,7 @@ template<typename T> void chmin(T& a, T b) { a = std::min(a, b); }
 template<typename T> void chadd(T& a, T b) { a = a + b; }
 
 namespace {  // 名前なし名前空間
-	// Bit演算を楽にするライブラリ
+	// Bit演算を楽にするライブラリ ２進数
 	// @author tada
 	class Bit {
 	public:
@@ -89,6 +88,57 @@ namespace {  // 名前なし名前空間
 	private:
 		int bit_;
 		int length_;
+	};
+
+	// n進数のライブラリ
+	// @author tada
+	template <typename T>
+	class NAry {
+	public:
+		// コンストラクタでn進数，サイズ数
+		NAry(int n, int length) : n_(n), length_(length) {
+			value_ = std::vector<T>(length, 0);
+		}
+
+		// 一つ先の値に移動する もう次に進めないならばfalseを返す
+		bool Next() {
+			int cnt = 0;
+			while (true) {
+				if (cnt == length_) return false; // もう最大値
+				if (value_[cnt] == n_ - 1) value_[cnt] = 0; // 繰り上げでもう一度
+				else {
+					++value_[cnt];
+					break;
+				}
+				++cnt;
+			}
+
+			return true;
+		}
+
+		// Bit操作 指定したインデックスを変更する
+		void Change(int i, int value = 1) {
+			value_[i] = value;
+		}
+
+		void Reset() {
+			value_ = std::vector<T>(n_, 0);
+		}
+
+		// n進数の現在の値で返す
+		const std::vector<T>& Get() const {
+			return value_;
+		}
+
+		// ビット長を返す
+		int GetLength() {
+			return length_;
+		}
+
+	private:
+		std::vector<T> value_;
+		int length_;
+		int n_;
 	};
 }
 

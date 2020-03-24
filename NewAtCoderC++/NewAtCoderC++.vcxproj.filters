@@ -38,9 +38,18 @@
     <ClInclude Include="TadaLib\LazySegmentTree.h">
       <Filter>ソース ファイル\TadaLib</Filter>
     </ClInclude>
+    <ClInclude Include="TadaLib\CulSum2D.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\Dijkstra.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="tmp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

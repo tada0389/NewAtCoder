@@ -8,7 +8,6 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include <stdio.h>
 #include <cstdio>
 #include <cstring>
 #include <cmath>
@@ -106,6 +105,11 @@ namespace {  // 名前なし名前空間
 		if (n < k) return 0;
 		if (n < 0 || k < 0) return 0;
 		return fac[n] * (finv[k] * finv[n - k] % mod) % mod;
+	}
+
+	// 重複組み合わせ
+	ll H(int n, int k) {
+		return COM(n + k - 1, k);
 	}
 }
 
