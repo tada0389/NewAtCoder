@@ -22,7 +22,7 @@
 
 using namespace std;
 
-#define Rep(i,a,b) for(ll i = a; i < b; ++i)
+#define Rep(i,a,b) for(int i = a; i < b; ++i)
 #define rep(i,b) Rep(i,0,b)
 #define allof(a) (a).begin(), (a).end()
 
@@ -32,6 +32,10 @@ using namespace std;
 #define POSSIBLE(q) ((q) ? "POSSIBLE" : "IMPOSSIBLE")
 
 using ll = long long;
+
+using pint = std::pair<int, int>;
+using pll = std::pair<ll, ll>;
+
 
 constexpr int inf = 1e9 + 7;
 constexpr ll infll = 1ll << 60ll;
@@ -49,30 +53,39 @@ namespace {
     template <typename T> void Cout(const T& x, const char* end = "\n") { std::cout << x << end; }
     template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
+    void CCout(long long x, const char* end = "\n") { std::cerr << x << end; }
+    template <typename T> void CCout(const T& x, const char* end = "\n") { std::cerr << x << end; }
+    template <typename T> void CCout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cerr << x[i] << (i == sz - 1 ? end : sep); } }
+
     // 標準入出力
     struct inp {
         std::size_t sz;
         inp(std::size_t _sz = 1) : sz(_sz) {}
         template <typename T> operator T () const { T a; std::cin >> a; return a; }
-        template <typename T> operator std::vector<T>() const { std::vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
-    };
-
-    // 2次元用の標準入出力
-    template<typename T>
-    struct inpn {
-        std::size_t szi, szj;
-        inpn(std::size_t _szi, std::size_t _szj) : szi(_szi), szj(_szj) {}
-        operator std::vector<std::vector<T>>() const {
-            std::vector<std::vector<T>> a(szi, std::vector<T>(szj));
-            for (std::size_t i = 0; i < szi; ++i)
-                for (std::size_t j = 0; j < szj; ++j) cin >> a[i][j];
-            return a;
-        }
+        template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
+        template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
     };
 
     inp inp1; // input one
 
-    // 蟻本から自分なりに改良
+    // ベルマンフォードのライブラリ
+    template<typename T>
+    vector<T> bellman_ford(vector<vector<pair<int, T>>> g, int s, int trial = 1) {
+        int n = (int)g.size();
+        const auto inf = numeric_limits<T>::max();
+        vector<T> dist(n, inf);
+        dist[s] = 0;
+        for (int i = 0; i < trial * (n - 1); ++i) {
+            for (int u = 0; u < n; ++u) {
+                for (const auto& e : g[u]) {
+                    if (dist[u] == inf) continue;
+                    dist[e.first] = min(dist[e.first], dist[u] + e.second);
+                }
+            }
+        }
+
+        return dist;
+    }
 
     struct Edge {
         ll from; // 移動前のノード
@@ -109,100 +122,67 @@ namespace {
 
     using Graph = vector<vector<Edge>>;
 
-    // ダイクストラ法 O(ElogV)
-    vector<ll> dijkstra(ll start, const Graph& G) {
-        vector<ll> dist(G.size(), infll);
-        // 辺のコストが小さい順に取り出す　場合に応じて変更
-        priority_queue<Edge, vector<Edge>, greater<Edge>> que;
-        //queue<Edge> que; // コストがすべて1の場合は普通のbfsにする コメントアウトしよう
-
-        dist[start] = 0; // dist[i] := start->iまでの最短距離
-        que.push(Edge(start, 0));
-
-        while (!que.empty()) {
-            ll cost, u; // 今までにかかった時間　現在の頂点
-            cost = que.top().cost, u = que.top().to;
-            //cost = que.front().cost, u = que.front().to;
-            que.pop();
-            if (dist[u] < cost) continue;
-            for (auto& e : G[u]) {
-                ll v = e.to;
-                ll new_cost = cost + e.cost;
-
-                if (dist[v] <= new_cost) continue;
-
-                dist[v] = new_cost;
-                que.push(Edge(v, new_cost));
+    // ベルマンフォードのライブラリ
+    // trialは試行回数 trial=1のときとtrial2のときの最短距離が異なるなら閉路になっている
+    // 計算量 O(|V||E|)
+    template<typename T>
+    vector<T> bellman_ford(int s, Graph& G, int trial = 1) {
+        int n = G.size();
+        const auto inf = numeric_limits<T>::max();
+        vector<T> dist(n, inf);
+        dist[s] = 0;
+        for (int i = 0; i < trial * (n - 1); ++i) {
+            for (int u = 0; u < n; ++u) {
+                for (const auto& e : G[u]) {
+                    if (dist[u] == inf) continue;
+                    dist[e.to] = min(dist[e.to], dist[u] + e.cost);
+                }
             }
         }
+
         return dist;
     }
-
 }
 
 int main() {
 
-    ll n, m, s;
-    cin >> n >> m >> s;
-
-    vector<ll> u(m), v(m), a(m), b(m);
+    int n, m;
+    cin >> n >> m;
+    Graph G(n);
     rep(i, m) {
-        cin >> u[i] >> v[i] >> a[i] >> b[i];
-        --u[i], --v[i];
-    }
-    vector<ll> c(n), d(n);
-    rep(i, n) {
-        cin >> c[i] >> d[i];
+        int a, b, c;
+        cin >> a >> b >> c;
+        --a, --b;
+        G[a].emplace_back(Edge(b, -c));
     }
 
-    const ll kMax = 2510;
-    chmin(s, kMax - 1);
+    auto dist1 = bellman_ford<ll>(0, G, 1);
+    auto dist2 = bellman_ford<ll>(0, G, 2);
 
-    Graph G(n * kMax);
+    if (dist1[n - 1] != dist2[n - 1]) Cout("inf");
+    else Cout(-dist1[n - 1]);
 
-    vector<vector<int>> to_node(n, vector<int>(kMax));
+    return 0;
+}
 
-    int to_index = 0;
-    rep(i, n) {
-        rep(j, kMax) {
-            to_node[i][j] = to_index++;
-        }
-    }
 
-    // 場所が異なるノードへの辺を構成
+int main() {
+
+    int n, m, p;
+    cin >> n >> m >> p;
+    vector<int> a(m), b(m), c(m);
+    vector<vector<pair<int, ll>>> g(n);
     rep(i, m) {
-        rep(j, kMax) { // 現在銀貨j枚持っているときにどう移動できるか
-            if (j - a[i] < 0) continue; // 銀貨が足りない
-            int from = to_node[u[i]][j];
-            int to = to_node[v[i]][j - a[i]];
-            G[from].push_back(Edge(to, b[i]));
-            from = to_node[v[i]][j];
-            to = to_node[u[i]][j - a[i]];
-            G[from].push_back(Edge(to, b[i]));
-        }
+        cin >> a[i] >> b[i] >> c[i];
+        --a[i], --b[i];
+        g[a[i]].push_back({ b[i], -c[i] + p });
     }
 
-    // 場所は同じだが階層が異なるノードへの辺を構成
-    rep(i, n) {
-        rep(j, kMax) { // 現在銀貨j枚持っているときにどう移動できるか
-            int from = to_node[i][j];
-            int to = to_node[i][min(j + c[i], kMax - 1)];
-            G[from].push_back(Edge(to, d[i]));
-        }
-    }
+    vector<ll> dist1 = bellman_ford<ll>(g, 0, 1);
+    vector<ll> dist2 = bellman_ford<ll>(g, 0, 2);
 
-    auto dist = dijkstra(to_node[0][s], G);
-
-
-    Rep(i, 1, n) {
-        ll ans = infll;
-        rep(j, kMax) {
-            chmin(ans, dist[to_node[i][j]]);
-        }
-        Cout(ans);
-    }
-
-    // 辺の数に注意
+    if (dist1[n - 1] != dist2[n - 1]) Cout(-1);
+    else Cout(max(0LL, -dist1[n - 1]));
 
     return 0;
 }

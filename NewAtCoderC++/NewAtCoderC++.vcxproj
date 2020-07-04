@@ -127,16 +127,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Favorits\ExclusivePrinciple.h" />
+    <ClInclude Include="Favorits\Segment.h" />
+    <ClInclude Include="SCC.h" />
+    <ClInclude Include="TadaLib\Bellmanford.h" />
     <ClInclude Include="TadaLib\BinarySearchLib.h" />
     <ClInclude Include="TadaLib\BitLib.h" />
+    <ClInclude Include="TadaLib\COM.h" />
     <ClInclude Include="TadaLib\CulSum2D.h" />
     <ClInclude Include="TadaLib\Dijkstra.h" />
     <ClInclude Include="TadaLib\FactorizeLib.h" />
     <ClInclude Include="TadaLib\GeometoryLib.h" />
+    <ClInclude Include="TadaLib\Kruskal.h" />
     <ClInclude Include="TadaLib\LazySegmentTree.h" />
+    <ClInclude Include="TadaLib\LCA.h" />
+    <ClInclude Include="TadaLib\MinCostFlow.h" />
     <ClInclude Include="TadaLib\ModLab.h" />
+    <ClInclude Include="TadaLib\OtherLib.h" />
     <ClInclude Include="TadaLib\SegmentTreeLib.h" />
+    <ClInclude Include="TadaLib\TopologicalSort.h" />
     <ClInclude Include="TadaLib\UnionFindLib.h" />
+    <ClInclude Include="TadaLib\WarshallFloyd.h" />
+    <ClInclude Include="TadaLib\XOR.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp" />

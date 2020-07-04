@@ -2,39 +2,24 @@
 #include <string>
 #include <algorithm>
 #include <vector>
-#include <array>
 #include <queue>
-#include <deque>
 #include <map>
 #include <set>
-#include <sstream>
-#include <cstdio>
-#include <cstring>
 #include <cmath>
-#include <list>
 #include <numeric>
-#include <stack>
 #include <iomanip>
-#include <random>
+#include <stack>
 #include <complex>
 #include <functional>
+#include <tuple>
 
 using namespace std;
 
-#define Rep(i,a,b) for(int i = a; i < b; ++i)
+#define Rep(i,a,b) for(ll i = a; i < b; ++i)
 #define rep(i,b) Rep(i,0,b)
 #define allof(a) (a).begin(), (a).end()
 
-#define Yes(q) ((q) ? "Yes" : "No")
-#define YES(q) ((q) ? "YES" : "NO")
-#define Possible(q) ((q) ? "Possible" : "Impossible")
-#define POSSIBLE(q) ((q) ? "POSSIBLE" : "IMPOSSIBLE")
-
-using ll =  long long;
-
-using pint = std::pair<int, int>;
-using pll = std::pair<ll, ll>;
-
+using ll = long long;
 
 constexpr int inf = 1e9 + 7;
 constexpr ll infll = 1ll << 60ll;
@@ -43,130 +28,209 @@ constexpr ll mod = 1e9 + 7;
 constexpr int dx[] = { 1, 0, -1, 0, 1, 1, -1, -1 };
 constexpr int dy[] = { 0, -1, 0, 1, 1, -1, -1, 1 };
 
-namespace {
-	template<typename T> void chmax(T& a, T b) { a = std::max(a, b); }
-	template<typename T> void chmin(T& a, T b) { a = std::min(a, b); }
-	template<typename T> void chadd(T& a, T b) { a = a + b; }
-	template<typename T> T gcd(T a, T b) { if (a < b) std::swap(a, b); while (b) std::swap(a %= b, b); return a; }
-	template<typename T> T lcm(const T a, const T b) { return a / gcd(a, b) * b; }
+template<typename T> bool chmax(T& a, T b) { if (a < b) { a = b; return true; } return false; }
+template<typename T> bool chmin(T& a, T b) { if (a > b) { a = b; return true; } return false; }
 
-	void Cout(long long x, const char* end = "\n") { std::cout << x << end; }
-	template <typename T> void Cout(const T& x, const char* end = "\n") { std::cout << x << end; }
-	template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") {
-		for (std::size_t i = 0, sz = x.size(); i < sz; i++) {
-			std::cout << x[i] << (i == sz - 1 ? end : sep);
-		}
-	}
+// @category セグメント木 (Segment Tree)
+// @title 遅延伝播セグメント木 (Lazy Segment Tree)
+template <typename MonoidType, typename OperatorType>
+struct LazySegmentTree {
+    using MMtoM = function< MonoidType(MonoidType, MonoidType) >;
+    using OOtoO = function< OperatorType(OperatorType, OperatorType) >;
+    using MOtoM = function< MonoidType(MonoidType, OperatorType) >;
+    using OItoO = function< OperatorType(OperatorType, int) >;
 
-	// 標準入出力
-	struct inp {
-		size_t sz;
-		inp(size_t _sz = 1) : sz(_sz) {}
-		template <typename T> operator T () const { T a; std::cin >> a; return a; }
-		template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
-		template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
-	};
+    // node, lazy, update flag (for lazy), identity element
+    int n;
+    vector<MonoidType> node;
+    vector<OperatorType> lazy;
+    vector<bool> need_update;
+    MonoidType E0;
+    OperatorType E1;
 
-	inp inp1; // input one
+    // update / combine / lazy / accumulate function
+    MOtoM upd_f;
+    MMtoM cmb_f;
+    OOtoO lzy_f;
+    OItoO acc_f;
 
-	// 遅延評価セグメントツリーのライブラリ
-	template<typename T>
-	struct LazySegmentTree {
-	public:
-		// a:初期配列, def:初期値かつ単位元, operation:クエリ関数,
-		// update:更新関数
-		LazySegmentTree(vector<T> a, T def, std::function<T(T, T)> operation,
-			std::function<T(T, T)> update)
-			: def_(def) { //, operation_(operation), update_(update) {
+    // 直接構築 a is 0-indexed
+    void set(int i, const MonoidType& v) { node[n - 1 + i] = v; }
+    void build() {
+        for (int i = n - 2; i >= 0; --i) {
+            node[i] = cmb_f(node[i * 2 + 1], node[i * 2 + 2]);
+        }
+    }
 
-			n_ = 1;
+    // initialize
+    LazySegmentTree() {}
+    LazySegmentTree(int n_, MonoidType E0_, OperatorType E1_,
+        MOtoM upd_f_, MMtoM cmb_f_, OOtoO lzy_f_, OItoO acc_f_,
+        MonoidType unity_monoid, OperatorType unity_operation) :
+        E0(E0_), E1(E1_),
+        upd_f(upd_f_), cmb_f(cmb_f_), lzy_f(lzy_f_), acc_f(acc_f_) {
 
-			size_t sz = a.size();
-			while (n_ < sz) n_ *= 2;
+        n = 1; while (n < n_) n *= 2;
 
-			node_.resize(2 * n_, def_);
-			lazy_.resize(2 * n_, def_);
+        node = vector<MonoidType>(2 * n - 1, unity_monoid);
+        lazy = vector<OperatorType>(2 * n - 1, unity_operation);
+        need_update = vector<bool>(2 * n - 1, false);
+    }
 
-			for (size_t i = 0; i < sz; ++i) node_[i + n_ - 1] = a[i];
-			for (int i = n_ - 2; i >= 0; --i) node_[i] = node_[i * 2 + 1] + node_[i * 2 + 2];
-		}
+    void eval(int k, int l, int r) {
+        if (!need_update[k]) return;
+        node[k] = upd_f(node[k], acc_f(lazy[k], r - l));
+        if (r - l > 1) {
+            lazy[2 * k + 1] = lzy_f(lazy[2 * k + 1], lazy[k]);
+            lazy[2 * k + 2] = lzy_f(lazy[2 * k + 2], lazy[k]);
+            need_update[2 * k + 1] = need_update[2 * k + 2] = true;
+        }
+        lazy[k] = E1;
+        need_update[k] = false;
+    }
 
-		// k番目のノードについて遅延評価する 自分のノードの添え字，ノードを指す範囲を渡す
-		void eval(int k, int l, int r) {
-			if (lazy_[k] != 0) {
-				node_[k] += lazy_[k]; // 自分のノードへ伝播
-				if (r - l > 1) { // 子ノードの遅延配列に値を伝播
-					// 子ノードは親ノードの1/2の範囲
-					lazy_[k * 2 + 1] += lazy_[k] / 2;
-					lazy_[k * 2 + 2] += lazy_[k] / 2;
-				}
-				lazy_[k] = 0; // 自分のノードの遅延配列を空にする
-			}
-		}
+    void update(int a, int b, OperatorType x, int l, int r, int k) {
+        eval(k, l, r);
+        if (b <= l or r <= a) return;
+        if (a <= l and r <= b) {
+            lazy[k] = lzy_f(lazy[k], x);
+            need_update[k] = true;
+            eval(k, l, r);
+        }
+        else {
+            int mid = (l + r) / 2;
+            update(a, b, x, l, mid, 2 * k + 1);
+            update(a, b, x, mid, r, 2 * k + 2);
+            node[k] = cmb_f(node[2 * k + 1], node[2 * k + 2]);
+        }
+    }
 
-		void add(int a, int b, T x, int k = 0, int l = 0, int r = -1) {
-			if (r < 0) r = n_;
+    MonoidType query(int a, int b, int l, int r, int k) {
+        if (b <= l or r <= a) return E0;
+        eval(k, l, r);
+        if (a <= l and r <= b) return node[k];
+        int mid = (l + r) / 2;
+        MonoidType vl = query(a, b, l, mid, 2 * k + 1);
+        MonoidType vr = query(a, b, mid, r, 2 * k + 2);
+        return cmb_f(vl, vr);
+    }
 
-			// k番目のノードに対して遅延評価を行う
-			eval(k, l, r);
-			// 範囲外なら何もしない
-			if (r <= a || b <= l) return;
+    // update [a, b)-th element (applied value, x)
+    void update(int a, int b, OperatorType x) {
+        update(a, b, x, 0, n, 0);
+    }
 
-			// 完全に被覆しているならば，遅延配列に値を入れた後に評価
-			if (a <= l && r <= b) {
-				lazy_[k] += (r - l) * x;
-				eval(k, l, r);
-			}
-			else { // そうでなければ，子ノードの値を再帰的に計算して，計算済みの値をもらってくる
-				add(a, b, x, k * 2 + 1, l, (l + r) / 2);
-				add(a, b, x, k * 2 + 2, (l + r) / 2, r);
-				node_[k] = node_[k * 2 + 1] + node_[k * 2 + 2];
-			}
-		}
+    // range query for [a, b)
+    MonoidType query(int a, int b) {
+        return query(a, b, 0, n, 0);
+    }
 
-		T getsum(int a, int b, int k = 0, int l = 0, int r = -1) {
-			if (r < 0) r = n_;
-			// 関数が呼び出されたら評価
-			eval(k, l, r);
-			if (r <= a || b <= l) return 0;
-			if (a <= l && r <= b) return node_[k];
-			T lv = getsum(a, b, k * 2 + 1, l, (l + r) / 2);
-			T rv = getsum(a, b, k * 2 + 2, (l + r) / 2, r);
-			return lv + rv;
-		}
-	private:
-		int n_;
-		std::vector<T> node_;
-		std::vector<T> lazy_;
-		T def_;                       // 初期値かつ単位元
-		//std::function<T(T, T)> operation_; // 区間クエリで使う処理
-		//std::function<T(T, T)> update_;    // 点更新で使う処理
+    void dump() {
+        fprintf(stderr, "[lazy]\n");
+        for (int i = 0; i < 2 * n - 1; i++) {
+            if (i == n - 1) fprintf(stderr, "xxx ");
+            if (lazy[i] == E1) fprintf(stderr, "  E ");
+            else fprintf(stderr, "%3d ", lazy[i]);
+        }
+        fprintf(stderr, "\n");
 
-	};
+        fprintf(stderr, "[node]\n");
+        for (int i = 0; i < 2 * n - 1; i++) {
+            if (i == n - 1) fprintf(stderr, "xxx ");
+            if (node[i] == E0) fprintf(stderr, "  E ");
+            else fprintf(stderr, "%3d ", node[i]);
+        }
+        fprintf(stderr, "\n");
+    }
+};
+
+int main() {
+
+    int n;
+    string x;
+    int q;
+    cin >> n >> x >> q;
+
+    using M = ll; // モノイドの型
+    using O = ll; // 作用の型
+    auto fmo = [](M m, O o) -> M { return o; }; // モノイドをどう変化させるか
+    auto fmm = [](M m1, M m2) -> M { return m1 + m2; }; // モノイドとモノイドの演算
+    auto foo = [](O o1, O o2) -> O { return o2; }; // 作用の合成
+    auto foi = [](O o, int x) -> O {return o * x; };
+    M em = 0; // モノイドの単位元
+    O eo = 0; // 作用の単位元
+    LazySegmentTree<M, O> seg_f(n, em, eo, fmo, fmm, foo, foi, 0, 0);
+    LazySegmentTree<M, O> seg_g(n - 1, em, eo, fmo, fmm, foo, foi, 0, 0);
+
+    rep(i, n) {
+        int c = x[i] - '0';
+        seg_f.set(i, c);
+        if (i != n - 1) {
+            seg_g.set(i, c * (x[i + 1] - '0'));
+        }
+    }
+    seg_f.build();
+    seg_g.build();
+
+    vector<int> ans(q);
+
+    //cout << " ";
+    //rep(i, n - 1) {
+    //    cout << seg_g.query(i, i + 1) << " ";
+    //}
+    //cout << endl;
+    rep(i, q) {
+        int l, r, b;
+        cin >> l >> r >> b;
+        seg_f.update(l - 1, r, b);
+        seg_g.update(l - 1, r - 1, b);
+        // はじを変える
+        seg_g.update(l - 2, l - 1, b * seg_f.query(l - 2, l - 1));
+        seg_g.update(r - 1, r, b * seg_f.query(r, r + 1));
+        rep(i, n) {
+            cout << seg_f.query(i, i + 1) << " ";
+        }
+        cout << endl;
+        cout << " ";
+        rep(i, n - 1) {
+            cout << seg_g.query(i, i + 1) << " ";
+        }
+        cout << endl;
+        ans[i] = seg_f.query(0, n) - seg_g.query(0, n - 1);
+        cout << seg_f.query(0, n) << " " << seg_g.query(0, n - 1) << endl;
+    }
+
+    for (auto a : ans) cout << a << endl;
+
+    return 0;
 }
 
-
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
 int main() {
-	int n = inp1;
-	int q = inp1;
 
-	std::vector<int> a(n, 0);
+    int n, m;
+    cin >> n >> m;
 
-	LazySegmentTree<int> segment_tree(a, 0, [](int a, int b)->int {return a + b; }, [](int a, int b)->int {return a + b; });
+    using M = ll; // モノイドの型
+    using O = ll; // 作用の型
+    auto fmo = [](M m, O o) -> M { return max(m, o); }; // モノイドをどう変化させるか
+    auto fmm = [](M m1, M m2) -> M { return max(m1, m2); }; // モノイドとモノイドの演算
+    auto foo = [](O o1, O o2) -> O { return max(o1, o2); }; // 作用の合成
+    auto foi = [](O o, int x) -> O {return o * x; };
+    M em = 0; // モノイドの単位元
+    O eo = 0; // 作用の単位元
+    LazySegmentTree<M, O> seg(n, em, eo, fmo, fmm, foo, foi, 0, 0);
 
-	rep(i, q) {
-		int b = inp1;
-		if (b == 0) { // add(s, t, x)
-			int s, t, x;
-			cin >> s >> t >> x;
-			segment_tree.add(s - 1, t, x);
-		}
-		else { // getSum(s, t)
-			int s, t;
-			cin >> s >> t;
-			Cout(segment_tree.getsum(s - 1, t));
-		}
-	}
-	return 0;
+    rep(i, m) {
+        int t, l, r;
+        cin >> t >> l >> r;
+
+        seg.update(l - 1, r, t);
+    }
+
+    ll ans = 0LL;
+    rep(i, n) ans += seg.query(i, i + 1);
+
+    cout << ans << endl;
+
+    return 0;
 }

@@ -12,6 +12,9 @@
     <Filter Include="ソース ファイル\TadaLib">
       <UniqueIdentifier>{2d35125c-cf52-4792-b3c6-6aff213b3258}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Favorites">
+      <UniqueIdentifier>{6a830810-0c47-4e3e-9554-b72dc2f802d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TadaLib\BinarySearchLib.h">
@@ -42,6 +45,42 @@
       <Filter>ソース ファイル\TadaLib</Filter>
     </ClInclude>
     <ClInclude Include="TadaLib\Dijkstra.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\Bellmanford.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\WarshallFloyd.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SCC.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Favorits\Segment.h">
+      <Filter>ソース ファイル\Favorites</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\COM.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\XOR.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Favorits\ExclusivePrinciple.h">
+      <Filter>ソース ファイル\Favorites</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\Kruskal.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\OtherLib.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\MinCostFlow.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\TopologicalSort.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TadaLib\LCA.h">
       <Filter>ソース ファイル\TadaLib</Filter>
     </ClInclude>
   </ItemGroup>

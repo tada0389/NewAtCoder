@@ -54,25 +54,22 @@ namespace {
         std::size_t sz;
         inp(std::size_t _sz = 1) : sz(_sz) {}
         template <typename T> operator T () const { T a; std::cin >> a; return a; }
-        template <typename T> operator std::vector<T>() const { std::vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
-    };
-
-    // 2次元用の標準入出力
-    template<typename T>
-    struct inpn {
-        std::size_t szi, szj;
-        inpn(std::size_t _szi, std::size_t _szj) : szi(_szi), szj(_szj) {}
-        operator std::vector<std::vector<T>>() const {
-            std::vector<std::vector<T>> a(szi, std::vector<T>(szj));
-            for (std::size_t i = 0; i < szi; ++i)
-                for (std::size_t j = 0; j < szj; ++j) cin >> a[i][j];
-            return a;
-        }
+        template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
+        template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
     };
 
     inp inp1; // input one
 
-    // 蟻本から自分なりに改良
+    void WarshallFloyd(vector<vector<ll>>& dist) {
+        size_t n = dist.size();
+        rep(k, n) {
+            rep(i, n) {
+                rep(j, n) {
+                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+                }
+            }
+        }
+    }
 
     struct Edge {
         ll from; // 移動前のノード
@@ -107,102 +104,116 @@ namespace {
         }
     };
 
-    using Graph = vector<vector<Edge>>;
+    using Graph = vector<Edge>;
 
-    // ダイクストラ法 O(ElogV)
-    vector<ll> dijkstra(ll start, const Graph& G) {
-        vector<ll> dist(G.size(), infll);
-        // 辺のコストが小さい順に取り出す　場合に応じて変更
-        priority_queue<Edge, vector<Edge>, greater<Edge>> que;
-        //queue<Edge> que; // コストがすべて1の場合は普通のbfsにする コメントアウトしよう
+    vector<vector<ll>> WarshalFloyd(Graph& G, size_t n) {
 
-        dist[start] = 0; // dist[i] := start->iまでの最短距離
-        que.push(Edge(start, 0));
+        vector<vector<ll>> dist(n, vector<ll>(n, infll));
 
-        while (!que.empty()) {
-            ll cost, u; // 今までにかかった時間　現在の頂点
-            cost = que.top().cost, u = que.top().to;
-            //cost = que.front().cost, u = que.front().to;
-            que.pop();
-            if (dist[u] < cost) continue;
-            for (auto& e : G[u]) {
-                ll v = e.to;
-                ll new_cost = cost + e.cost;
+        for (int i = 0; i < n; ++i) dist[i][i] = 0LL;
 
-                if (dist[v] <= new_cost) continue;
+        for (const auto& edge : G) {
+            dist[edge.from][edge.to] = edge.cost;
+        }
 
-                dist[v] = new_cost;
-                que.push(Edge(v, new_cost));
+        for (int k = 0; k < n; ++k) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+                }
             }
         }
+
         return dist;
     }
-
 }
 
 int main() {
 
-    ll n, m, s;
-    cin >> n >> m >> s;
-
-    vector<ll> u(m), v(m), a(m), b(m);
+    ll n, m, l;
+    cin >> n >> m >> l;
+    vector<ll> a(m), b(m), c(m);
     rep(i, m) {
-        cin >> u[i] >> v[i] >> a[i] >> b[i];
-        --u[i], --v[i];
+        cin >> a[i] >> b[i] >> c[i];
     }
-    vector<ll> c(n), d(n);
-    rep(i, n) {
-        cin >> c[i] >> d[i];
-    }
+    int q = inp1;
+    vector<ll> s(q), t(q);
+    rep(i, q) cin >> s[i] >> t[i];
 
-    const ll kMax = 2510;
-    chmin(s, kMax - 1);
+    // c > l の道のりはないものとカウントしていい
 
-    Graph G(n * kMax);
+    // 隣り合う辺でコストの和が l 以下のは統合していい
+    // 代わりにすべての辺のコストを lにする
 
-    vector<vector<int>> to_node(n, vector<int>(kMax));
+    vector<vector<ll>> dist(n, vector<ll>(n, infll));
 
-    int to_index = 0;
-    rep(i, n) {
-        rep(j, kMax) {
-            to_node[i][j] = to_index++;
-        }
-    }
-
-    // 場所が異なるノードへの辺を構成
     rep(i, m) {
-        rep(j, kMax) { // 現在銀貨j枚持っているときにどう移動できるか
-            if (j - a[i] < 0) continue; // 銀貨が足りない
-            int from = to_node[u[i]][j];
-            int to = to_node[v[i]][j - a[i]];
-            G[from].push_back(Edge(to, b[i]));
-            from = to_node[v[i]][j];
-            to = to_node[u[i]][j - a[i]];
-            G[from].push_back(Edge(to, b[i]));
-        }
+        dist[a[i] - 1][b[i] - 1] = c[i];
+        dist[b[i] - 1][a[i] - 1] = c[i];
     }
 
-    // 場所は同じだが階層が異なるノードへの辺を構成
+    // O(n^3)
+    WarshallFloyd(dist);
+
+    vector<vector<ll>> dist_2(n, vector<ll>(n, infll));
+
     rep(i, n) {
-        rep(j, kMax) { // 現在銀貨j枚持っているときにどう移動できるか
-            int from = to_node[i][j];
-            int to = to_node[i][min(j + c[i], kMax - 1)];
-            G[from].push_back(Edge(to, d[i]));
+        rep(j, n) {
+            if (dist[i][j] <= l) {
+                dist_2[i][j] = 1;
+            }
         }
     }
 
-    auto dist = dijkstra(to_node[0][s], G);
+    WarshallFloyd(dist_2);
 
+    rep(i, q) {
+        ll ans = dist_2[s[i] - 1][t[i] - 1];
 
-    Rep(i, 1, n) {
-        ll ans = infll;
-        rep(j, kMax) {
-            chmin(ans, dist[to_node[i][j]]);
-        }
-        Cout(ans);
+        if (ans == infll) ans = 0;
+        Cout(ans - 1);
     }
 
-    // 辺の数に注意
+    return 0;
+}
+
+// https://atcoder.jp/contests/agc039/tasks/agc039_b
+int main() {
+
+    int n = inp1;
+    vector<string> s = inp(n);
+    Graph G;
+
+    rep(i, n) {
+        rep(j, s[i].size()) {
+            if (s[i][j] == '1') G.emplace_back(Edge(i, j, 1)), G.emplace_back(Edge(j, i, 1));
+        }
+    }
+
+    auto dist = WarshalFloyd(G, n);
+
+    int ans = -1;
+
+    rep(i, n) {
+        bool can = true;
+
+        vector<int> group(n, -1);
+        rep(j, n) {
+            group[j] = dist[i][j];
+        }
+
+        for (auto edge : G) {
+            int dif = group[edge.from] - group[edge.to];
+            if (dif != 1 && dif != -1) {
+                can = false;
+                break;
+            }
+        }
+
+        if (can) chmax(ans, *max_element(allof(group)) + 1);
+    }
+
+    Cout(ans);
 
     return 0;
 }

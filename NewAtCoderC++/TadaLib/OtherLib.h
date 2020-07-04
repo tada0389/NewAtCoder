@@ -4,9 +4,7 @@
 #include <vector>
 #include <queue>
 #include <map>
-#include <unordered_map>
 #include <set>
-#include <unordered_set>
 #include <cmath>
 #include <numeric>
 #include <iomanip>
@@ -30,22 +28,20 @@ using ll = long long;
 
 constexpr int inf = 1e9 + 7;
 constexpr ll infll = 1ll << 60ll;
-constexpr ll mod = 1e9 + 7;
-// 0~3までは右下左上 4~7までは斜め
-constexpr int dx[] = { 1, 0, -1, 0, 1, -1 };
-constexpr int dy[] = { 0, 1, 0, -1, 1, 1 };
+constexpr ll mod = 998244353;
+// 0~3までは右左下上 4~7までは斜め
+constexpr int dx[] = { 1, 0, -1, 0, 1, 1, -1, -1 };
+constexpr int dy[] = { 0, -1, 0, 1, 1, -1, -1, 1 };
 
 namespace {
     template<typename T> bool chmax(T& a, T b) { if (a < b) { a = b; return true; } return false; }
     template<typename T> bool chmin(T& a, T b) { if (a > b) { a = b; return true; } return false; }
 
-    // 標準出力
-    void Out(long long x, const char* end = "\n") { std::cout << x << end; }
-    template <typename T> void Out(const T& x, const char* end = "\n") { std::cout << x << end; }
-    template <typename T> void Out(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; ++i) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
-    template <typename T> void Out(const std::vector<std::vector<T>>& x, const char* sep = " ", const char* end = "\n") { for (auto v : x) Out(v, sep, end); }
+    void Cout(long long x, const char* end = "\n") { std::cout << x << end; }
+    template <typename T> void Cout(const T& x, const char* end = "\n") { std::cout << x << end; }
+    template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; ++i) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
-    // 標準入力
+    // 標準入出力
     struct inp {
         std::size_t szi, szj;
         inp(std::size_t _szi = 1, std::size_t _szj = 1) : szi(_szi), szj(_szj) {}
@@ -56,32 +52,24 @@ namespace {
             for (std::size_t i = 0; i < szi; ++i) for (std::size_t j = 0; j < szj; ++j) cin >> a[i][j]; return a;
         }
     };
-
     inp inp1;
+
+    struct Element {
+        int value;
+        int id;
+        int id2;
+
+        Element() = default;
+        Element(int left, int right, int index) : value(left), id(right), id2(index) {};
+        bool operator< (const Element& rhs) const {
+            return true;
+        }
+    };
 }
 
 int main() {
 
-    int n, x;
-    cin >> n >> x;
-    vector<ll> a = inp(n);
 
-    //　左から貪欲でいいよな
-
-    ll ans = 0;
-
-    vector<ll> sum(n, 0);
-    rep(i, n - 1) sum[i] = a[i] + a[i + 1];
-
-    rep(i, n - 1) {
-        if (sum[i] > x) {
-            int add = sum[i] - x;
-            sum[i + 1] -= add;
-            ans += add;
-        }
-    }
-
-    Out(ans);
 
     return 0;
 }

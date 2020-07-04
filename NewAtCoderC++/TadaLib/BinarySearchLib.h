@@ -30,7 +30,7 @@ using namespace std;
 #define Possible(q) ((q) ? "Possible" : "Impossible")
 #define POSSIBLE(q) ((q) ? "POSSIBLE" : "IMPOSSIBLE")
 
-using ll =  long long;
+using ll = long long;
 
 using pint = std::pair<int, int>;
 using pll = std::pair<ll, ll>;
@@ -44,40 +44,40 @@ constexpr int dx[] = { 1, 0, -1, 0, 1, 1, -1, -1 };
 constexpr int dy[] = { 0, -1, 0, 1, 1, -1, -1, 1 };
 
 namespace {
-	template<typename T> void chmax(T& a, T b) { a = std::max(a, b); }
-	template<typename T> void chmin(T& a, T b) { a = std::min(a, b); }
-	template<typename T> void chadd(T& a, T b) { a = a + b; }
-	template<typename T> T gcd(T a, T b) { if (a < b) std::swap(a, b); while (b) std::swap(a %= b, b); return a; }
-	template<typename T> T lcm(const T a, const T b) { return a / gcd(a, b) * b; }
+    template<typename T> void chmax(T& a, T b) { a = std::max(a, b); }
+    template<typename T> void chmin(T& a, T b) { a = std::min(a, b); }
+    template<typename T> void chadd(T& a, T b) { a = a + b; }
+    template<typename T> T gcd(T a, T b) { if (a < b) std::swap(a, b); while (b) std::swap(a %= b, b); return a; }
+    template<typename T> T lcm(const T a, const T b) { return a / gcd(a, b) * b; }
 
-	template <typename T> void Cout(T& x, char end = '\n') { std::cout << x << end; }
-	template <typename T> void Cout(std::vector<T>& x, char sep = ' ', char end = '\n') { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
+    template <typename T> void Cout(T& x, char end = '\n') { std::cout << x << end; }
+    template <typename T> void Cout(std::vector<T>& x, char sep = ' ', char end = '\n') { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
 
-	// 標準入出力
-	struct inp {
-		size_t sz;
-		inp(size_t _sz = 1) : sz(_sz) {}
-		template <typename T> operator T () const { T a; std::cin >> a; return a; }
-		template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
-		template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
-	};
+    // 標準入出力
+    struct inp {
+        size_t sz;
+        inp(size_t _sz = 1) : sz(_sz) {}
+        template <typename T> operator T () const { T a; std::cin >> a; return a; }
+        template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
+        template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
+    };
 
-	inp inp1; // input one
+    inp inp1; // input one
 
-	// 二分探索を行うライブラリ
-	// @author tada
-	// T は返り値の型
-	template<typename T>
-	T BinarySearch(T left, T right, std::function<bool(T)> Check) {
-		while (right - left > 1) {
-			int mid = (right + left) / 2;
-			if (Check(mid)) left = mid; // 右を探す
-			else right = mid;                       // 左を探す
-		}
-		// mid = left, mid = right - 1 となっている
-		return left;
-	}
+    // 二分探索を行うライブラリ
+    // @author tada
+    // T は返り値の型
+    template<typename T>
+    T BinarySearch(T left, T right, std::function<bool(T)> Check) {
+        while (right - left > 1) {
+            T mid = (right + left) / 2;
+            if (Check(mid)) left = mid; // 右を探す
+            else right = mid;                       // 左を探す
+        }
+        // mid = left, mid = right - 1 となっている
+        return left;
+    }
 }
 
 
