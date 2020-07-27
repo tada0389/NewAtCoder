@@ -44,9 +44,9 @@ namespace {
     template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; ++i) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
     // 標準入出力
-    struct inp {
+    struct Read {
         std::size_t szi, szj;
-        inp(std::size_t _szi = 1, std::size_t _szj = 1) : szi(_szi), szj(_szj) {}
+        Read(std::size_t _szi = 1, std::size_t _szj = 1) : szi(_szi), szj(_szj) {}
         template <typename T> operator T () const { T a; std::cin >> a; return a; }
         template <typename T> operator std::vector<T>() const { std::vector<T> a(szi); for (std::size_t i = 0; i < szi; ++i) std::cin >> a[i]; return a; }
         template <typename T> operator std::vector<std::vector<T>>() const {
@@ -54,7 +54,7 @@ namespace {
             for (std::size_t i = 0; i < szi; ++i) for (std::size_t j = 0; j < szj; ++j) cin >> a[i][j]; return a;
         }
     };
-    inp inp1;
+    Read inp1;
 
     struct Edge {
         ll from; // 移動前のノード

@@ -43,9 +43,9 @@ namespace {
     template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; i++) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
     // 標準入出力
-    struct inp {
+    struct Read {
         std::size_t sz;
-        inp(std::size_t _sz = 1) : sz(_sz) {}
+        Read(std::size_t _sz = 1) : sz(_sz) {}
         template <typename T> operator T () const { T a; std::cin >> a; return a; }
         template <typename T> operator std::vector<T>() const { std::vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
     };
@@ -63,7 +63,7 @@ namespace {
         }
     };
 
-    inp inp1; // input one
+    Read inp1; // input one
 
         // けんちょんさんのを改造した tada
     // Combination を高速にテーブル化させるライブラリ

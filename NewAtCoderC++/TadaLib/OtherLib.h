@@ -42,9 +42,9 @@ namespace {
     template <typename T> void Cout(const std::vector<T>& x, const char* sep = " ", const char* end = "\n") { for (std::size_t i = 0, sz = x.size(); i < sz; ++i) { std::cout << x[i] << (i == sz - 1 ? end : sep); } }
 
     // •W€“üo—Í
-    struct inp {
+    struct Read {
         std::size_t szi, szj;
-        inp(std::size_t _szi = 1, std::size_t _szj = 1) : szi(_szi), szj(_szj) {}
+        Read(std::size_t _szi = 1, std::size_t _szj = 1) : szi(_szi), szj(_szj) {}
         template <typename T> operator T () const { T a; std::cin >> a; return a; }
         template <typename T> operator std::vector<T>() const { std::vector<T> a(szi); for (std::size_t i = 0; i < szi; ++i) std::cin >> a[i]; return a; }
         template <typename T> operator std::vector<std::vector<T>>() const {
@@ -52,7 +52,7 @@ namespace {
             for (std::size_t i = 0; i < szi; ++i) for (std::size_t j = 0; j < szj; ++j) cin >> a[i][j]; return a;
         }
     };
-    inp inp1;
+    Read inp1;
 
     struct Element {
         int value;
@@ -73,3 +73,59 @@ int main() {
 
     return 0;
 }
+
+
+int main() {
+
+    int l, r, d; Reads(l, r, d);
+    int ans = 0;
+    for (int i = l; i <= r; ++i) {
+        if (i % d == 0) ++ans;
+    }
+    Write(ans);
+
+    return 0;
+}
+
+int main() {
+
+    int n = read;
+    vector<int> a = Read(n);
+
+    int ans = 0;
+    for (int i = 0; i < n; i += 2) {
+        if (a[i] % 2 == 1) ++ans;
+    }
+    Write(ans);
+
+    return 0;
+}
+
+int main() {
+
+    int n = read;
+
+    vector<ll> ans(n, 0LL);
+    rep(i, n) {
+        int v = i + 1;
+
+        int res = 0;
+        const int kMax = 102;
+        Rep(x, 1, kMax) {
+            Rep(y, 1, kMax) {
+                Rep(z, 1, kMax) {
+                    int value = x * x + y * y + z * z + x * y + y * z + z * x;
+                    if (value == v) {
+                        ++res;
+                    }
+                }
+            }
+        }
+        ans[i] = res;
+    }
+
+    Write(ans, "\n");
+
+    return 0;
+}
+

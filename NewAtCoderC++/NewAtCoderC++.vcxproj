@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="Favorits\ExclusivePrinciple.h" />
     <ClInclude Include="Favorits\Segment.h" />
+    <ClInclude Include="GeometoryTmp.h" />
     <ClInclude Include="SCC.h" />
     <ClInclude Include="TadaLib\Bellmanford.h" />
     <ClInclude Include="TadaLib\BinarySearchLib.h" />

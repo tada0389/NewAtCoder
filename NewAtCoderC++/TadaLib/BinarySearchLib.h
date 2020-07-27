@@ -55,15 +55,15 @@ namespace {
 
 
     // 標準入出力
-    struct inp {
+    struct Read {
         size_t sz;
-        inp(size_t _sz = 1) : sz(_sz) {}
+        Read(size_t _sz = 1) : sz(_sz) {}
         template <typename T> operator T () const { T a; std::cin >> a; return a; }
         template <typename T> operator std::vector<T>() const { vector<T> a(sz); for (std::size_t i = 0; i < sz; i++) std::cin >> a[i]; return a; }
         template <typename T, typename U> operator std::pair<T, U>() const { T f; U s; std::cin >> f >> s; return std::pair<T, U>(f, s); }
     };
 
-    inp inp1; // input one
+    Read inp1; // input one
 
     // 二分探索を行うライブラリ
     // @author tada
