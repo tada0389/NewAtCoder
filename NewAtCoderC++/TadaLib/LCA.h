@@ -92,7 +92,7 @@ namespace {
     using Graph = vector<vector<Edge>>;
 
     // LCA ２つのノードを渡して最小共通祖先を求める
-    // 根付き木構造で使える
+    // 根付き木構造で使える Lowest Common Ancestor
     class LCA {
     public:
         LCA(const Graph& G, int root = 0) {
@@ -157,8 +157,6 @@ namespace {
 
         vector<vector<int>> parent; // parent[k][u] := uの2^k先の親
         vector<int> dist; // rootからの距離
-
-
     };
 }
 

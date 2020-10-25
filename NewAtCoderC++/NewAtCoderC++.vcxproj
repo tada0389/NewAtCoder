@@ -136,6 +136,7 @@
     <ClInclude Include="TadaLib\BitLib.h" />
     <ClInclude Include="TadaLib\COM.h" />
     <ClInclude Include="TadaLib\CulSum2D.h" />
+    <ClInclude Include="TadaLib\CustomInt.h" />
     <ClInclude Include="TadaLib\Dijkstra.h" />
     <ClInclude Include="TadaLib\FactorizeLib.h" />
     <ClInclude Include="TadaLib\GeometoryLib.h" />
