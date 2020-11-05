@@ -89,6 +89,9 @@
     <ClInclude Include="TadaLib\CustomInt.h">
       <Filter>ソース ファイル\TadaLib</Filter>
     </ClInclude>
+    <ClInclude Include="LazySegmentTree_ACL.h">
+      <Filter>ソース ファイル\TadaLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp">

@@ -109,20 +109,6 @@ namespace {
 
     using Graph = vector<vector<Edge>>;
 
-    // 単純な入力のグラフを読み取る 
-    Graph ReadGraph(int n, int m, bool zeroStart = false) {
-        Graph G(n);
-        for (int i = 0; i < m; ++i) {
-            int u, v;
-            cin >> u >> v;
-            if (!zeroStart) --u, --v;
-            G[u].emplace_back(v);
-            G[v].emplace_back(u);
-        }
-
-        return G;
-    }
-
     // ダイクストラ法 O(ElogV)
     vector<ll> dijkstra(ll start, const Graph& G) {
         vector<ll> dist(G.size(), infll);
@@ -150,6 +136,20 @@ namespace {
             }
         }
         return dist;
+    }
+
+    // 単純な入力のグラフを読み取る 
+    Graph ReadGraph(int n, int m, bool zeroStart = false) {
+        Graph G(n);
+        for (int i = 0; i < m; ++i) {
+            int u, v;
+            cin >> u >> v;
+            if (!zeroStart) --u, --v;
+            G[u].emplace_back(v);
+            G[v].emplace_back(u);
+        }
+
+        return G;
     }
 
 }
